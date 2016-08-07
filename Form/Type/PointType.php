@@ -7,6 +7,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use DCS\Form\PointFormFieldBundle\DataTransformer\TextToPointTransformer;
 
 class PointType extends AbstractType
@@ -31,17 +32,15 @@ class PointType extends AbstractType
         $builder->addViewTransformer(new TextToPointTransformer(), true);
     }
 
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
             'functionFillFromGoogleResult' => null,
             'functionEmptyWhenNoDigit' => null,
         ));
 
-        $resolver->setAllowedTypes(array(
-            'functionFillFromGoogleResult' => array('string', 'null'),
-            'functionEmptyWhenNoDigit' => array('string', 'null'),
-        ));
+        $resolver->setAllowedTypes('functionFillFromGoogleResult', array('string', 'null'));
+        $resolver->setAllowedTypes('functionEmptyWhenNoDigit', array('string', 'null'));
     }
 
     public function getParent()
@@ -49,6 +48,11 @@ class PointType extends AbstractType
         return $this->parentType;
     }
 
+    public function getBlockPrefix()
+    {
+        return $this->getName();
+    }
+    
     public function getName()
     {
         return 'point';
